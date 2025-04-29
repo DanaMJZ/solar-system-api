@@ -9,7 +9,8 @@ def create_planet():
     request_body = request.get_json()
     name = request_body["name"]
     description = request_body["description"]
-    new_planet = Planet(name=name, description=description)
+    distance = request_body["distance"]
+    new_planet = Planet(name=name, description=description, distance=distance)
     db.session.add(new_planet)
     db.session.commit()
 
@@ -17,20 +18,34 @@ def create_planet():
         "id": new_planet.id,
         "name": new_planet.name,
         "description": new_planet.description,
+        "distance" : new_planet.distance
     }
     return response, 201
 
 @planets_bp.get("")
 def get_all_planets():
-    query = db.select(Planet).order_by(Planet.id)
+    query = db.select(Planet)
+    discription_param = request.args.get("discription")
+    distance_param = request.args.get("distance")
+    if discription_param:
+        query = query.where(Planet.discription == discription_param)
+    if  distance_param:
+        query = query.where(Planet.distance == int(distance_param))
+
+    query = query.order_by(Planet.id.desc())       # building sql query, We use SQLAlchemy to send select formated request to our db to get all cats sorted by the order
     planets = db.session.scalars(query)
+
+
+
+
     planets_response = []
     for planet in planets:
         planets_response.append(
             {
                 "id": planet.id,
                 "name": planet.name,
-                "description": planet.description  
+                "description": planet.description,
+                "distance" : planet.distance  
             }
     )
 
@@ -59,6 +74,7 @@ def get_one_planet(planet_id):
         "id": planet.id,
         "name": planet.name,
         "description": planet.description,
+        "distance" : planet.distance
     }
 
 @planets_bp.put("/<planet_id>")
@@ -68,6 +84,7 @@ def update_planet(planet_id):
 
     planet.name = request_body["name"]
     planet.description = request_body["description"]
+    planet.distance = request_body["distance"]
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
