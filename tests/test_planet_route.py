@@ -39,11 +39,11 @@ def test_create_one_planet(client):
         "distance":1234
     }
 
-def test_delete_book_missing_record(client):
+def test_delete_planet_missing_record(client):
     # Act
     response = client.get("/planets/3")
     response_body = response.get_json()
 
     # Assert
     assert response.status_code == 404
-    assert response_body == {"message": f"planet 3 not found"}
+    assert response_body == {"message": f"Planet 3 not found"}
