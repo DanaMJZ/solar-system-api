@@ -17,8 +17,7 @@
 
 from sqlalchemy.orm import Mapped, mapped_column,relationship
 from ..db import db
-from sqlalchemy import ForeignKey
-from typing import Optional
+
 
 #only when make changes related to database (change column) in model need to run migrate again. 
 class Planet(db.Model):
@@ -26,16 +25,13 @@ class Planet(db.Model):
     name: Mapped[str]
     description: Mapped[str]
     distance : Mapped[int]
-    moon_id: Mapped[Optional[int]] = mapped_column(ForeignKey("moon.id"))
-    moons: Mapped[Optional["Moon"]] = relationship(back_populates="planet")
+    moons: Mapped[list["Moon"]] = relationship(back_populates="planet")
 
     @classmethod
     def from_dict(cls, planet_data):
-        moon_id = planet_data.get("moon_id")
         new_planet = Planet(name=planet_data["name"],
                         description=planet_data["description"],
-                        distance = planet_data["distance"],
-                        moon_id=moon_id)
+                        distance = planet_data["distance"])
         return new_planet
     
     def to_dict(self):
@@ -46,6 +42,6 @@ class Planet(db.Model):
         planet_as_dict["distance"] = self.distance
 
         if self.moons:
-            planet_as_dict["moon"] = self.moon.name
+            planet_as_dict["moons"] = [moon.name for moon in self.moons]
 
         return planet_as_dict

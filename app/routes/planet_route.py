@@ -100,7 +100,7 @@ def create_planet_with_moon(planet_id):
 @planets_bp.get("/<planet_id>/moons")
 def get_moons_by_planet(planet_id):
     planet = validate_model(Planet, planet_id)
-    response = [moon.to_dict() for moon in planet.moon]
+    response = [moon.to_dict() for moon in planet.moons]
     return response
 
 
