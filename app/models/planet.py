@@ -27,7 +27,7 @@ class Planet(db.Model):
     description: Mapped[str]
     distance : Mapped[int]
     moon_id: Mapped[Optional[int]] = mapped_column(ForeignKey("moon.id"))
-    moon: Mapped[Optional["Moon"]] = relationship(back_populates="planets")
+    moons: Mapped[Optional["Moon"]] = relationship(back_populates="planet")
 
     @classmethod
     def from_dict(cls, planet_data):
@@ -45,7 +45,7 @@ class Planet(db.Model):
         planet_as_dict["description"] = self.description
         planet_as_dict["distance"] = self.distance
 
-        if self.moon:
+        if self.moons:
             planet_as_dict["moon"] = self.moon.name
 
         return planet_as_dict

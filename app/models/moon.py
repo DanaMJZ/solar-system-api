@@ -9,7 +9,7 @@ class Moon(db.Model):
     size: Mapped[int]
     color: Mapped[str]
     description: Mapped[str]
-    planets: Mapped[list["Planet"]] = relationship(back_populates="moon")
+    planet: Mapped[list["Planet"]] = relationship(back_populates="moons")
 
     def to_dict(self):
         moon_as_dict = {}
